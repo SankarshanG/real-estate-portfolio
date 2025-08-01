@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Bed, Bath, Square, MapPin, ArrowRight, Heart, 
+  Bed, Bath, Square, MapPin, ArrowRight, Heart, ChevronLeft, ChevronRight,
   Camera, Calendar, Star, Zap
 } from 'lucide-react';
 import { Property } from '../types';
