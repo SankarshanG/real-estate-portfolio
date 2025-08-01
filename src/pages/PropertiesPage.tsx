@@ -1,28 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { Grid, List, Filter, Search, MapPin, Bed, Bath, Square } from 'lucide-react';
-import { properties } from '../data/properties';
+import { useProperties, PropertyFilters } from '../hooks/useProperties';
 import PropertyCard from '../components/PropertyCard';
-import { Property, FilterOptions } from '../types';
 
 const PropertiesPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('price-low');
-  const [filters, setFilters] = useState<FilterOptions>({
-    priceRange: [0, 2000000],
-    bedrooms: [],
-    bathrooms: [],
-    squareFeet: [0, 10000],
-    communities: [],
-    homeTypes: [],
-    status: [],
-    quickMoveIn: false,
-  });
+  const [filters, setFilters] = useState<PropertyFilters>({});
 
-  // Get unique values for filter options
-  const communities = [...new Set(properties.map(p => p.community))];
-  const homeTypes = [...new Set(properties.map(p => p.type))];
-  const statuses = [...new Set(properties.map(p => p.status))];
+  const { properties, loading, error } = useProperties(filters);
+
+  // Get unique cities for filter options
+  const cities = [...new Set(properties.map(p => p.city))];
 
   // Filter and sort properties
   const filteredProperties = useMemo(() => {
@@ -31,46 +21,6 @@ const PropertiesPage: React.FC = () => {
       if (searchTerm && !property.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
           !property.address.toLowerCase().includes(searchTerm.toLowerCase()) &&
           !property.city.toLowerCase().includes(searchTerm.toLowerCase())) {
-        return false;
-      }
-
-      // Price range
-      if (property.price < filters.priceRange[0] || property.price > filters.priceRange[1]) {
-        return false;
-      }
-
-      // Bedrooms
-      if (filters.bedrooms.length > 0 && !filters.bedrooms.includes(property.bedrooms)) {
-        return false;
-      }
-
-      // Bathrooms
-      if (filters.bathrooms.length > 0 && !filters.bathrooms.includes(property.bathrooms)) {
-        return false;
-      }
-
-      // Square feet
-      if (property.squareFeet < filters.squareFeet[0] || property.squareFeet > filters.squareFeet[1]) {
-        return false;
-      }
-
-      // Communities
-      if (filters.communities.length > 0 && !filters.communities.includes(property.community)) {
-        return false;
-      }
-
-      // Home types
-      if (filters.homeTypes.length > 0 && !filters.homeTypes.includes(property.type)) {
-        return false;
-      }
-
-      // Status
-      if (filters.status.length > 0 && !filters.status.includes(property.status)) {
-        return false;
-      }
-
-      // Quick move-in
-      if (filters.quickMoveIn && !property.isQuickMoveIn) {
         return false;
       }
 
@@ -86,10 +36,10 @@ const PropertiesPage: React.FC = () => {
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'sqft-low':
-        filtered.sort((a, b) => a.squareFeet - b.squareFeet);
+        filtered.sort((a, b) => a.square_feet - b.square_feet);
         break;
       case 'sqft-high':
-        filtered.sort((a, b) => b.squareFeet - a.squareFeet);
+        filtered.sort((a, b) => b.square_feet - a.square_feet);
         break;
       case 'beds':
         filtered.sort((a, b) => b.bedrooms - a.bedrooms);
@@ -102,32 +52,40 @@ const PropertiesPage: React.FC = () => {
     }
 
     return filtered;
-  }, [searchTerm, filters, sortBy]);
+  }, [properties, searchTerm, sortBy]);
 
   const clearFilters = () => {
-    setFilters({
-      priceRange: [0, 2000000],
-      bedrooms: [],
-      bathrooms: [],
-      squareFeet: [0, 10000],
-      communities: [],
-      homeTypes: [],
-      status: [],
-      quickMoveIn: false,
-    });
+    setFilters({});
     setSearchTerm('');
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Properties</h1>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary-900 to-primary-700 text-white py-16">
-        <div className="container-max px-4">
+      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Available Properties
             </h1>
-            <p className="text-xl text-primary-100 max-w-2xl mx-auto">
+            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
               Discover our collection of luxury homes available for quick move-in. 
               Find the perfect property that matches your lifestyle and preferences.
             </p>
@@ -137,7 +95,7 @@ const PropertiesPage: React.FC = () => {
 
       {/* Filters and Search */}
       <section className="bg-white border-b border-gray-200 sticky top-20 z-40">
-        <div className="container-max px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* Search */}
             <div className="relative w-full lg:w-96">
@@ -147,7 +105,7 @@ const PropertiesPage: React.FC = () => {
                 placeholder="Search properties..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
@@ -171,7 +129,7 @@ const PropertiesPage: React.FC = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
@@ -185,52 +143,20 @@ const PropertiesPage: React.FC = () => {
 
           {/* Filter Toggles */}
           <div className="mt-4 flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilters(prev => ({ ...prev, quickMoveIn: !prev.quickMoveIn }))}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                filters.quickMoveIn 
-                  ? 'bg-primary-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Quick Move-In
-            </button>
-            
-            {communities.map(community => (
+            {cities.map(city => (
               <button
-                key={community}
+                key={city}
                 onClick={() => {
-                  const newCommunities = filters.communities.includes(community)
-                    ? filters.communities.filter(c => c !== community)
-                    : [...filters.communities, community];
-                  setFilters(prev => ({ ...prev, communities: newCommunities }));
+                  const newCity = filters.city === city ? undefined : city;
+                  setFilters(prev => ({ ...prev, city: newCity }));
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  filters.communities.includes(community)
-                    ? 'bg-primary-600 text-white'
+                  filters.city === city
+                    ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {community}
-              </button>
-            ))}
-
-            {homeTypes.map(type => (
-              <button
-                key={type}
-                onClick={() => {
-                  const newTypes = filters.homeTypes.includes(type)
-                    ? filters.homeTypes.filter(t => t !== type)
-                    : [...filters.homeTypes, type];
-                  setFilters(prev => ({ ...prev, homeTypes: newTypes }));
-                }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  filters.homeTypes.includes(type)
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {type.replace('-', ' ')}
+                {city}
               </button>
             ))}
 
@@ -245,8 +171,8 @@ const PropertiesPage: React.FC = () => {
       </section>
 
       {/* Properties Grid */}
-      <section className="section-padding">
-        <div className="container-max">
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Results Count */}
           <div className="mb-8">
             <p className="text-gray-600">
@@ -255,7 +181,25 @@ const PropertiesPage: React.FC = () => {
           </div>
 
           {/* Properties */}
-          {filteredProperties.length > 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+                  <div className="h-64 bg-gray-200"></div>
+                  <div className="p-6">
+                    <div className="h-6 bg-gray-200 rounded mb-4"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-6"></div>
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      <div className="h-12 bg-gray-200 rounded"></div>
+                      <div className="h-12 bg-gray-200 rounded"></div>
+                      <div className="h-12 bg-gray-200 rounded"></div>
+                    </div>
+                    <div className="h-12 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredProperties.length > 0 ? (
             <div className={
               viewMode === 'grid' 
                 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
@@ -278,7 +222,7 @@ const PropertiesPage: React.FC = () => {
               </p>
               <button
                 onClick={clearFilters}
-                className="btn-primary"
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
               >
                 Clear Filters
               </button>
@@ -290,4 +234,4 @@ const PropertiesPage: React.FC = () => {
   );
 };
 
-export default PropertiesPage; 
+export default PropertiesPage;

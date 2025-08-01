@@ -13,6 +13,8 @@ const AdminDashboard: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([])
   const [showPropertyForm, setShowPropertyForm] = useState(false)
   const [editingProperty, setEditingProperty] = useState<Property | null>(null)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     checkUser()
@@ -68,8 +70,6 @@ const AdminDashboard: React.FC = () => {
   }
 
   const handleDeleteProperty = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this property?')) return
-
     const { error } = await supabase
       .from('properties')
       .delete()
@@ -80,7 +80,19 @@ const AdminDashboard: React.FC = () => {
       alert('Error deleting property')
     } else {
       fetchProperties()
+      setShowDeleteModal(false)
+      setPropertyToDelete(null)
     }
+  }
+
+  const openDeleteModal = (id: string) => {
+    setPropertyToDelete(id)
+    setShowDeleteModal(true)
+  }
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false)
+    setPropertyToDelete(null)
   }
 
   const markAsSold = async (id: string) => {
@@ -287,7 +299,7 @@ const AdminDashboard: React.FC = () => {
                           </button>
                         )}
                         <button
-                          onClick={() => handleDeleteProperty(property.id)}
+                          onClick={() => openDeleteModal(property.id)}
                           className="text-red-600 hover:text-red-700 p-1"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -316,6 +328,34 @@ const AdminDashboard: React.FC = () => {
             setEditingProperty(null)
           }}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4">
+              Delete Property
+            </h3>
+            <p className="text-slate-600 mb-6">
+              Are you sure you want to delete this property? This action cannot be undone.
+            </p>
+            <div className="flex space-x-4">
+              <button
+                onClick={closeDeleteModal}
+                className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => propertyToDelete && handleDeleteProperty(propertyToDelete)}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
