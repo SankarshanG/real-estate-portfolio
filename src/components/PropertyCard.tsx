@@ -37,7 +37,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, featured = false 
   };
 
   return (
-    <div className={`card-property ${featured ? 'lg:col-span-2' : ''}`}>
+    <div className={`card-property group ${featured ? 'lg:col-span-2' : ''}`}>
       {/* Image Gallery */}
       <div className="relative overflow-hidden">
         <div className="relative h-64 md:h-72">
