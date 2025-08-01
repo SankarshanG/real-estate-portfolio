@@ -7,10 +7,9 @@ const SaleBanner: React.FC = () => {
 
   useEffect(() => {
     // Check if there are any active sales or promotions
-    // This could be connected to a database or CMS
     const checkActiveSales = () => {
       // For demo purposes, show banner randomly
-      setHasActiveSale(Math.random() > 0.5)
+      setHasActiveSale(Math.random() > 0.3)
     }
 
     checkActiveSales()
