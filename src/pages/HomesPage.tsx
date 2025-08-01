@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react'
 import { Search, Grid, List } from 'lucide-react'
-import { useProperties, PropertyFilters } from '../hooks/useProperties'
+import { useProperties, PropertyFilters as PropertyFilterTypes } from '../hooks/useProperties'
 import PropertyCard from '../components/PropertyCard'
 import PropertyFilters from '../components/PropertyFilters'
 
 const HomesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [filters, setFilters] = useState<PropertyFilters>({})
+  const [filters, setFilters] = useState<PropertyFilterTypes>({})
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   
   const { properties, loading, error } = useProperties(filters)

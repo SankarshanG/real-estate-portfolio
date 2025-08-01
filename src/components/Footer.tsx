@@ -25,13 +25,13 @@ const Footer: React.FC = () => {
               We specialize in luxury real estate with premium amenities.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors duration-200">
+              <a href="/#" className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors duration-200">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors duration-200">
+              <a href="/#" className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors duration-200">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors duration-200">
+              <a href="/#" className="w-10 h-10 bg-slate-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors duration-200">
                 <Twitter className="w-5 h-5" />
               </a>
             </div>
@@ -69,22 +69,22 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-6">Our Services</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+                <a href="/#" className="text-slate-400 hover:text-white transition-colors duration-200">
                   New Construction
                 </a>
               </li>
               <li>
-                <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+                <a href="/#" className="text-slate-400 hover:text-white transition-colors duration-200">
                   Custom Homes
                 </a>
               </li>
               <li>
-                <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+                <a href="/#" className="text-slate-400 hover:text-white transition-colors duration-200">
                   Property Management
                 </a>
               </li>
               <li>
-                <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+                <a href="/#" className="text-slate-400 hover:text-white transition-colors duration-200">
                   Investment Properties
                 </a>
               </li>
@@ -133,13 +133,13 @@ const Footer: React.FC = () => {
               © {currentYear} Highland Homes. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm mt-4 md:mt-0">
-              <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+              <a href="/#" className="text-slate-400 hover:text-white transition-colors duration-200">
                 Privacy Policy
               </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+              <a href="/#" className="text-slate-400 hover:text-white transition-colors duration-200">
                 Terms of Service
               </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+              <a href="/#" className="text-slate-400 hover:text-white transition-colors duration-200">
                 Equal Housing Opportunity
               </a>
             </div>
