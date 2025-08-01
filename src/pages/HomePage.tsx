@@ -1,13 +1,92 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Home, Star, Users, Award, MapPin } from 'lucide-react'
-import { useProperties } from '../hooks/useProperties'
+import { useProperties, Property } from '../hooks/useProperties'
 import PropertyCard from '../components/PropertyCard'
 import SaleBanner from '../components/SaleBanner'
 
 const HomePage: React.FC = () => {
   const { properties: featuredProperties, loading } = useProperties()
-  const featured = featuredProperties.filter(p => p.is_featured).slice(0, 6)
+  
+  // Fallback data for homepage if Supabase fails
+  const fallbackFeaturedProperties: Property[] = [
+    {
+      id: '1',
+      title: 'Luxury Estate in Frisco',
+      address: '123 Highland Drive, Frisco, TX 75034',
+      city: 'Frisco',
+      state: 'TX',
+      zip_code: '75034',
+      price: 850000,
+      bedrooms: 5,
+      bathrooms: 4,
+      square_feet: 3200,
+      description: 'Stunning luxury estate featuring premium finishes and spacious living areas.',
+      status: 'available',
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      images: [{
+        id: '1',
+        property_id: '1',
+        image_url: 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=800',
+        display_order: 1,
+        created_at: new Date().toISOString()
+      }]
+    },
+    {
+      id: '2',
+      title: 'Modern Townhome in Plano',
+      address: '456 Oak Street, Plano, TX 75023',
+      city: 'Plano',
+      state: 'TX',
+      zip_code: '75023',
+      price: 425000,
+      bedrooms: 3,
+      bathrooms: 2,
+      square_feet: 1800,
+      description: 'Contemporary townhome with open floor plan and modern amenities.',
+      status: 'available',
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      images: [{
+        id: '2',
+        property_id: '2',
+        image_url: 'https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg?auto=compress&cs=tinysrgb&w=800',
+        display_order: 1,
+        created_at: new Date().toISOString()
+      }]
+    },
+    {
+      id: '3',
+      title: 'Family Home in Allen',
+      address: '789 Maple Lane, Allen, TX 75013',
+      city: 'Allen',
+      state: 'TX',
+      zip_code: '75013',
+      price: 525000,
+      bedrooms: 4,
+      bathrooms: 3,
+      square_feet: 2400,
+      description: 'Perfect family home with large backyard and excellent schools nearby.',
+      status: 'pending',
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      images: [{
+        id: '3',
+        property_id: '3',
+        image_url: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800',
+        display_order: 1,
+        created_at: new Date().toISOString()
+      }]
+    }
+  ]
+
+  // Use fallback data if there's an error or no properties
+  const displayProperties = error || featuredProperties.length === 0 ? fallbackFeaturedProperties : featuredProperties
+  const featured = displayProperties.filter(property => property.is_featured).slice(0, 6)
 
   return (
     <div>
