@@ -50,3 +50,10 @@ export interface Lead {
   source: string
   created_at: string
 }
+
+export interface FloorPlanOverlay {
+  id: string
+  property_id: string
+  overlay_data: any
+  created_at: string
+}

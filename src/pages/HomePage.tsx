@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Home, Star, Users, Award, MapPin } from 'lucide-react'
 import { useProperties } from '../hooks/useProperties'
 import PropertyCard from '../components/PropertyCard'
+import SaleBanner from '../components/SaleBanner'
 
 const HomePage: React.FC = () => {
   const { properties: featuredProperties, loading } = useProperties()
@@ -10,6 +11,9 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
+      {/* Sale Banner */}
+      <SaleBanner />
+
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-slate-50 to-blue-50 py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,7 +45,7 @@ const HomePage: React.FC = () => {
             </div>
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop"
+                src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop"
                 alt="Beautiful home exterior"
                 className="rounded-2xl shadow-2xl"
               />

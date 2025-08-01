@@ -99,15 +99,16 @@ const Footer: React.FC = () => {
                 <MapPin className="w-5 h-5 text-blue-400 mt-1" />
                 <div>
                   <p className="text-white font-medium">Visit Our Office</p>
-                  <p className="text-slate-400 text-sm">123 Main Street</p>
-                  <p className="text-slate-400 text-sm">Dallas, TX 75201</p>
+                  <p className="text-slate-400 text-sm">4400 State Hwy 121</p>
+                  <p className="text-slate-400 text-sm">Suite 410</p>
+                  <p className="text-slate-400 text-sm">Lewisville, TX 75056</p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="text-white font-medium">(555) 123-4567</p>
+                  <p className="text-white font-medium">(972) 410-5701</p>
                   <p className="text-slate-400 text-sm">Call us today</p>
                 </div>
               </div>
@@ -115,7 +116,7 @@ const Footer: React.FC = () => {
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-blue-400" />
                 <div>
-                  <p className="text-white font-medium">info@realestate.com</p>
+                  <p className="text-white font-medium">info@premiumrealestate.com</p>
                   <p className="text-slate-400 text-sm">Send us an email</p>
                 </div>
               </div>

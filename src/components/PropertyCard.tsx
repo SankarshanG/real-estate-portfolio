@@ -36,7 +36,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
   }
 
   const currentImage = property.images[currentImageIndex]
-  const fallbackImage = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop'
+  const fallbackImage = 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop'
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-300 group">

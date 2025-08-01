@@ -1,5 +1,5 @@
 import React from 'react'
-import { Search, Filter } from 'lucide-react'
+import { Filter } from 'lucide-react'
 import { PropertyFilters as Filters } from '../hooks/useProperties'
 
 interface PropertyFiltersProps {
