@@ -228,6 +228,7 @@ export function useProperties(filters?: PropertyFilters) {
   const fetchProperties = async () => {
     try {
       setLoading(true)
+      setError(null)
       
       // Try to fetch from Supabase first
       try {
@@ -357,6 +358,7 @@ export function useProperty(id: string) {
   const fetchProperty = async () => {
     try {
       setLoading(true)
+      setError(null)
       
       // Try to fetch from Supabase first
       try {
