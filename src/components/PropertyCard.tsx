@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Bed, Bath, Square, MapPin, ArrowRight } from 'lucide-react';
+import { Bed, Bath, Square, MapPin, Car } from 'lucide-react';
 import { Property } from '../types';
 
 interface PropertyCardProps {
@@ -14,101 +14,146 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(price || 0);
   };
 
-  const formatAddress = (address: string, city: string, state: string) => {
-    return `${address}, ${city}, ${state}`;
+  // Debug logging for images
+  React.useEffect(() => {
+    if (property.images && property.images.length > 0) {
+      console.log(`PropertyCard: Property ${property.id} has ${property.images.length} images:`, property.images);
+    }
+  }, [property.images, property.id]);
+
+  // Ensure we have safe defaults for all properties
+  const safeProperty = {
+    id: property.id || '',
+    title: property.title || 'Untitled Property',
+    price: property.price || 0,
+    bedrooms: property.bedrooms || 0,
+    bathrooms: property.bathrooms || 0,
+    sqft: property.sqft || 0,
+    squareFeet: property.squareFeet || property.sqft || 0,
+    address: property.address || 'Address not available',
+    city: property.city || 'City not available',
+    state: property.state || 'State not available',
+    status: property.status || 'available',
+    images: property.images || [],
+    features: property.features || [],
+    garageSpaces: property.garageSpaces || 0,
+    isQuickMoveIn: property.isQuickMoveIn || false,
   };
 
   return (
-    <div className="card group hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden group hover:shadow-lg transition-shadow duration-300">
       {/* Image */}
       <div className="relative overflow-hidden">
-        <img
-          src={property.images[0]}
-          alt={property.title}
-          className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        {property.isQuickMoveIn && (
-          <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+        {safeProperty.images && safeProperty.images.length > 0 ? (
+          <img
+            src={safeProperty.images[0]}
+            alt={safeProperty.title}
+            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              // Fallback to placeholder if image fails to load
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              target.nextElementSibling?.classList.remove('hidden');
+            }}
+          />
+        ) : null}
+        {/* Fallback placeholder - always present but hidden when image loads successfully */}
+        <div className={`w-full h-64 bg-gray-200 flex items-center justify-center ${safeProperty.images && safeProperty.images.length > 0 ? 'hidden' : ''}`}>
+          <div className="text-center">
+            <div className="text-gray-400 mb-2">
+              <Square className="w-12 h-12 mx-auto" />
+            </div>
+            <span className="text-gray-500 text-sm">No image available</span>
+          </div>
+        </div>
+        
+        {/* Quick Move-In Badge */}
+        {safeProperty.isQuickMoveIn && (
+          <div className="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
             Quick Move-In
           </div>
         )}
-        <div className="absolute top-4 right-4 bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-medium">
-          {property.status === 'available' ? 'Available' : property.status}
+        
+        {/* SOLD Overlay */}
+        {safeProperty.status === 'sold' && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <div className="bg-red-600 text-white px-6 py-3 rounded-lg transform -rotate-12">
+              <span className="text-2xl font-bold">SOLD</span>
+            </div>
+          </div>
+        )}
+        
+        {/* Price Badge */}
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+          <span className="text-lg font-bold text-primary-600">{formatPrice(safeProperty.price)}</span>
         </div>
       </div>
 
       {/* Content */}
       <div className="p-6">
-        {/* Price */}
-        <div className="text-2xl font-bold text-primary-600 mb-2">
-          {formatPrice(property.price)}
+        {/* Title and Address */}
+        <div className="mb-4">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+            {safeProperty.title}
+          </h3>
+          <div className="flex items-center text-gray-600">
+            <MapPin className="w-4 h-4 mr-1" />
+            <span className="text-sm">{safeProperty.address}, {safeProperty.city}, {safeProperty.state}</span>
+          </div>
         </div>
 
-        {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-          {property.title}
-        </h3>
-
-        {/* Address */}
-        <div className="flex items-center text-gray-600 mb-4">
-          <MapPin className="w-4 h-4 mr-2" />
-          <span className="text-sm">
-            {formatAddress(property.address, property.city, property.state)}
-          </span>
-        </div>
-
-        {/* Property Details */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
+        {/* Key Features */}
+        <div className="mb-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center text-gray-600">
               <Bed className="w-4 h-4 mr-1" />
-              <span className="text-sm">{property.bedrooms} Beds</span>
+              <span className="text-sm">{safeProperty.bedrooms} Beds</span>
             </div>
             <div className="flex items-center text-gray-600">
               <Bath className="w-4 h-4 mr-1" />
-              <span className="text-sm">{property.bathrooms} Baths</span>
+              <span className="text-sm">{safeProperty.bathrooms} Baths</span>
             </div>
             <div className="flex items-center text-gray-600">
               <Square className="w-4 h-4 mr-1" />
-              <span className="text-sm">{property.squareFeet.toLocaleString()} Sq Ft</span>
+              <span className="text-sm">{safeProperty.squareFeet.toLocaleString()} Sq Ft</span>
+            </div>
+            <div className="flex items-center text-gray-600">
+              <Car className="w-4 h-4 mr-1" />
+              <span className="text-sm">{safeProperty.garageSpaces} Garage</span>
             </div>
           </div>
         </div>
 
-        {/* Community */}
-        <div className="text-sm text-gray-600 mb-4">
-          <span className="font-medium">Community:</span> {property.community}
-        </div>
-
         {/* Features */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
-            {property.features.slice(0, 3).map((feature, index) => (
-              <span
-                key={index}
-                className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
-              >
-                {feature}
-              </span>
-            ))}
-            {property.features.length > 3 && (
-              <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
-                +{property.features.length - 3} more
-              </span>
-            )}
+        {safeProperty.features && safeProperty.features.length > 0 && (
+          <div className="mb-6">
+            <div className="flex flex-wrap gap-2">
+              {safeProperty.features.slice(0, 3).map((feature, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                >
+                  {feature}
+                </span>
+              ))}
+              {safeProperty.features.length > 3 && (
+                <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                  +{safeProperty.features.length - 3} more
+                </span>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* CTA Button */}
+        {/* Action Button */}
         <Link
-          to={`/properties/${property.id}`}
-          className="w-full btn-primary flex items-center justify-center group-hover:bg-primary-700 transition-colors"
+          to={`/properties/${safeProperty.id}`}
+          className="block w-full bg-primary-600 text-white text-center py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors flex items-center justify-center"
         >
           View Details
-          <ArrowRight className="w-4 h-4 ml-2" />
         </Link>
       </div>
     </div>

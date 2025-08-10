@@ -277,7 +277,7 @@ const AboutPage: React.FC = () => {
               Contact Us
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
-            <Link to="/properties" className="border-2 border-white text-white hover:bg-white hover:text-primary-600 font-medium py-3 px-8 rounded-lg transition-colors duration-200">
+            <Link to="/properties" className="border-2 border-white text-white hover:bg-white hover:text-primary-600 font-medium py-3 px-8 rounded-lg transition-colors duration-200 flex items-center justify-center">
               View Properties
             </Link>
           </div>

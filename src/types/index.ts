@@ -1,27 +1,64 @@
 export interface Property {
   id: string;
   title: string;
+  description: string;
+  price: number;
+  bedrooms: number;
+  sqft?: number;
+  squareFeet?: number;
+  bathrooms?: number;
+  stories?: number;
   address: string;
   city: string;
   state: string;
-  zipCode: string;
-  price: number;
-  bedrooms: number;
-  bathrooms: number;
-  squareFeet: number;
-  stories: number;
-  status: 'available' | 'sold' | 'under-contract';
-  type: 'single-family' | 'townhouse' | 'condo';
-  community: string;
-  floorPlan: string;
-  mlsNumber: string;
-  images: string[];
-  description: string;
-  features: string[];
-  lotSize?: number;
-  yearBuilt?: number;
+  zip_code?: string;
+  zipCode?: string;
+  lat?: number;
+  lng?: number;
+  status: string;
+  type?: string;
+  community?: string;
+  build_plan_url?: string;
+  published?: boolean;
+  update_at?: string;
+  // Additional fields used in PropertyDetailPage
   garageSpaces?: number;
-  isQuickMoveIn: boolean;
+  features?: string[];
+  mlsNumber?: string;
+  floorPlan?: string;
+  yearBuilt?: number;
+  lotSize?: number;
+  images?: string[];
+  isQuickMoveIn?: boolean;
+}
+
+export interface Image {
+  id: string;
+  property_id: string;
+  image_url: string;
+  caption: string;
+  order: number;
+  created_at: string;
+}
+
+export interface Lead {
+  id: string;
+  property_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  created_at: string;
+}
+
+export interface Sale {
+  id: string;
+  label: string;
+  discount_pct: number;
+  starts_at: string;
+  ends_at: string;
+  active: boolean;
+  created_at: string;
 }
 
 export interface Community {
@@ -86,4 +123,13 @@ export interface ContactForm {
   message: string;
   propertyId?: string;
   communityId?: string;
+}
+
+export interface Settings {
+  id: string;
+  key: string;
+  value: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
 } 

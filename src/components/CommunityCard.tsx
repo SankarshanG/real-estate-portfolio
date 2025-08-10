@@ -118,7 +118,7 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ community }) => {
         {/* CTA Button */}
         <Link
           to={`/communities/${community.id}`}
-          className="w-full btn-primary flex items-center justify-center group-hover:bg-primary-700 transition-colors"
+                      className="w-full btn-primary group-hover:bg-primary-700 transition-colors"
         >
           View Community
           <ArrowRight className="w-4 h-4 ml-2" />

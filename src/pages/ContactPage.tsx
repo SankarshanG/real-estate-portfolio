@@ -113,7 +113,7 @@ const ContactPage: React.FC = () => {
                   />
                 </div>
 
-                <button type="submit" className="w-full btn-primary flex items-center justify-center">
+                <button type="submit" className="w-full btn-primary">
                   <Send className="w-5 h-5 mr-2" />
                   Send Message
                 </button>

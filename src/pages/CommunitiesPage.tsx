@@ -7,7 +7,7 @@ const CommunitiesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
 
-  const cities = [...new Set(communities.map(c => c.city))];
+  const cities = Array.from(new Set(communities.map(c => c.city)));
 
   const filteredCommunities = useMemo(() => {
     return communities.filter(community => {

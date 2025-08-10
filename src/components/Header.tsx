@@ -1,40 +1,72 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, Mail } from 'lucide-react';
+import { Menu, X, Search } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Properties', href: '/properties' },
-    { name: 'Communities', href: '/communities' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ];
+      const navigation = [
+      { 
+        name: 'Properties', 
+        href: '/properties',
+        hasDropdown: false 
+      },
+      { 
+        name: 'Gallery', 
+        href: '/gallery',
+        hasDropdown: false 
+      },
+      { 
+        name: 'Floor Plans', 
+        href: '/floor-plans',
+        hasDropdown: false 
+      },
+      { 
+        name: 'Map Demo', 
+        href: '/map-demo',
+        hasDropdown: false 
+      },
+      { 
+        name: 'Communities', 
+        href: '/communities',
+        hasDropdown: false 
+      },
+      { 
+        name: 'About', 
+        href: '/about',
+        hasDropdown: false 
+      },
+    ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
-      {/* Top bar */}
-      <div className="bg-primary-600 text-white py-2">
+      {/* Top bar - Awards, Careers, Blog, Search */}
+      <div className="bg-gray-800 text-white py-2">
         <div className="container-max px-4">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4" />
-                <span>(972) 410-5701</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Mail className="w-4 h-4" />
-                <span>info@premiumrealestate.com</span>
-              </div>
+              <Link to="/awards" className="hover:text-gray-300 transition-colors">
+                Awards
+              </Link>
+              <Link to="/careers" className="hover:text-gray-300 transition-colors">
+                Careers
+              </Link>
+              <Link to="/blog" className="hover:text-gray-300 transition-colors">
+                Blog
+              </Link>
             </div>
-            <div className="hidden md:flex items-center space-x-4">
-              <span>Mon-Fri: 9AM-6PM</span>
-              <span>Sat: 10AM-4PM</span>
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="bg-gray-700 text-white px-3 py-1 rounded text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              </div>
             </div>
           </div>
         </div>
@@ -44,13 +76,10 @@ const Header: React.FC = () => {
       <div className="container-max px-4">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">P</span>
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Premium Real Estate</h1>
-              <p className="text-sm text-gray-600">Luxury Homes & Communities</p>
+          <Link to="/" className="flex items-center space-x-3">
+            <div className="text-2xl font-bold">
+              <span className="text-gray-800 font-serif">Premium Real Estate</span>
+              <span className="text-primary-600 font-sans font-bold"> Properties</span>
             </div>
           </Link>
 
@@ -73,8 +102,11 @@ const Header: React.FC = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Link to="/contact" className="btn-primary">
-              Get Started
+            <Link 
+              to="/contact" 
+              className="bg-gray-200 text-gray-800 px-6 py-2 rounded font-medium hover:bg-gray-300 transition-colors"
+            >
+              Contact Us
             </Link>
           </div>
 
@@ -110,9 +142,9 @@ const Header: React.FC = () => {
               <Link
                 to="/contact"
                 onClick={() => setIsMenuOpen(false)}
-                className="btn-primary w-full text-center"
+                className="bg-gray-200 text-gray-800 px-6 py-2 rounded font-medium hover:bg-gray-300 transition-colors block text-center"
               >
-                Get Started
+                Contact Us
               </Link>
             </div>
           </div>

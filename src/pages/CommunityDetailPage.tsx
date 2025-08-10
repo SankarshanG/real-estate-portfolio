@@ -240,14 +240,14 @@ const CommunityDetailPage: React.FC = () => {
                     >
                       <div className="flex items-center space-x-4">
                         <img
-                          src={property.images[0]}
+                          src={property.images && property.images.length > 0 ? property.images[0] : '/placeholder-property.jpg'}
                           alt={property.title}
                           className="w-20 h-20 object-cover rounded-lg"
                         />
                         <div className="flex-1">
                           <h4 className="font-semibold text-gray-900">{property.title}</h4>
                           <div className="text-sm text-gray-600">
-                            {property.bedrooms} beds, {property.bathrooms} baths, {property.squareFeet.toLocaleString()} sq ft
+                            {property.bedrooms} beds, {property.bathrooms || 0} baths, {(property.squareFeet || property.sqft || 0).toLocaleString()} sq ft
                           </div>
                           <div className="text-lg font-bold text-primary-600">
                             ${property.price.toLocaleString()}

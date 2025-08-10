@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://your-domain.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin area
+Disallow: /admin/
+Disallow: /admin/*
+
+# Allow important pages
+Allow: /properties/
+Allow: /gallery/
+Allow: /communities/
+Allow: /blog/
+Allow: /about/
+Allow: /contact/ 

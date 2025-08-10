@@ -1,248 +1,329 @@
-import React, { useState, useMemo } from 'react';
-import { Grid, List, Filter, Search, MapPin, Bed, Bath, Square } from 'lucide-react';
-import { properties } from '../data/properties';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, Filter, X } from 'lucide-react';
+import { DatabaseService } from '../services/database';
 import PropertyCard from '../components/PropertyCard';
-import { Property, FilterOptions } from '../types';
+import { Property } from '../types';
 
 const PropertiesPage: React.FC = () => {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('price-low');
-  const [filters, setFilters] = useState<FilterOptions>({
-    priceRange: [0, 2000000],
-    bedrooms: [],
-    bathrooms: [],
-    squareFeet: [0, 10000],
-    communities: [],
-    homeTypes: [],
-    status: [],
-    quickMoveIn: false,
-  });
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Individual filter states
+  const [cityFilter, setCityFilter] = useState('');
+  const [bedroomsFilter, setBedroomsFilter] = useState<number | ''>('');
+  const [bathroomsFilter, setBathroomsFilter] = useState<number | ''>('');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000000]);
+  const [squareFeetRange, setSquareFeetRange] = useState<[number, number]>([0, 10000]);
 
-  // Get unique values for filter options
-  const communities = [...new Set(properties.map(p => p.community))];
-  const homeTypes = [...new Set(properties.map(p => p.type))];
-  const statuses = [...new Set(properties.map(p => p.status))];
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        console.log('PropertiesPage: Fetching properties...');
+        // Use the regular getAllProperties function for public users
+        const propertiesData = await DatabaseService.getAllProperties();
+        console.log('PropertiesPage: Raw fetched properties:', propertiesData);
+        
+        // Ensure we have valid properties
+        const validProperties = propertiesData.filter(prop => prop && prop.id);
+        console.log('PropertiesPage: Valid properties count:', validProperties.length);
+        
+        setProperties(validProperties);
+      } catch (error) {
+        console.error('PropertiesPage: Error fetching properties:', error);
+        setProperties([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
+
 
   // Filter and sort properties
   const filteredProperties = useMemo(() => {
+    console.log('PropertiesPage: Filtering properties. Total properties:', properties.length);
+    console.log('PropertiesPage: Properties data:', properties);
+    
     let filtered = properties.filter(property => {
-      // Search term
+      console.log('PropertiesPage: Checking property:', property.title);
+      console.log('PropertiesPage: Full property data:', property);
+      
+      // Search term (title, address, city)
       if (searchTerm && !property.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
           !property.address.toLowerCase().includes(searchTerm.toLowerCase()) &&
           !property.city.toLowerCase().includes(searchTerm.toLowerCase())) {
+        console.log('PropertiesPage: Property filtered out by search term');
         return false;
       }
 
-      // Price range
-      if (property.price < filters.priceRange[0] || property.price > filters.priceRange[1]) {
+      // City filter
+      if (cityFilter && property.city.toLowerCase() !== cityFilter.toLowerCase()) {
+        console.log('PropertiesPage: Property filtered out by city. City:', property.city, 'Filter:', cityFilter);
         return false;
       }
 
-      // Bedrooms
-      if (filters.bedrooms.length > 0 && !filters.bedrooms.includes(property.bedrooms)) {
+      // Bedrooms filter
+      if (bedroomsFilter !== '' && property.bedrooms !== bedroomsFilter) {
+        console.log('PropertiesPage: Property filtered out by bedrooms. Bedrooms:', property.bedrooms, 'Filter:', bedroomsFilter);
         return false;
       }
 
-      // Bathrooms
-      if (filters.bathrooms.length > 0 && !filters.bathrooms.includes(property.bathrooms)) {
+      // Bathrooms filter
+      if (bathroomsFilter !== '' && property.bathrooms !== bathroomsFilter) {
+        console.log('PropertiesPage: Property filtered out by bathrooms. Bathrooms:', property.bathrooms, 'Filter:', bathroomsFilter);
         return false;
       }
 
-      // Square feet
-      if (property.squareFeet < filters.squareFeet[0] || property.squareFeet > filters.squareFeet[1]) {
+      // Price range filter
+      const propertyPrice = property.price || 0;
+      console.log('PropertiesPage: Property price:', propertyPrice, 'Type:', typeof propertyPrice);
+      if (propertyPrice < priceRange[0] || propertyPrice > priceRange[1]) {
+        console.log('PropertiesPage: Property filtered out by price range. Price:', propertyPrice, 'Range:', priceRange);
         return false;
       }
 
-      // Communities
-      if (filters.communities.length > 0 && !filters.communities.includes(property.community)) {
+      // Square footage filter
+      const squareFeet = property.squareFeet || property.sqft || 0;
+      if (squareFeet < squareFeetRange[0] || squareFeet > squareFeetRange[1]) {
+        console.log('PropertiesPage: Property filtered out by square feet. SqFt:', squareFeet, 'Range:', squareFeetRange);
         return false;
       }
 
-      // Home types
-      if (filters.homeTypes.length > 0 && !filters.homeTypes.includes(property.type)) {
-        return false;
-      }
-
-      // Status
-      if (filters.status.length > 0 && !filters.status.includes(property.status)) {
-        return false;
-      }
-
-      // Quick move-in
-      if (filters.quickMoveIn && !property.isQuickMoveIn) {
-        return false;
-      }
-
+      console.log('PropertiesPage: Property passed all filters:', property.title);
       return true;
     });
 
-    // Sort properties
-    switch (sortBy) {
-      case 'price-low':
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case 'sqft-low':
-        filtered.sort((a, b) => a.squareFeet - b.squareFeet);
-        break;
-      case 'sqft-high':
-        filtered.sort((a, b) => b.squareFeet - a.squareFeet);
-        break;
-      case 'beds':
-        filtered.sort((a, b) => b.bedrooms - a.bedrooms);
-        break;
-      case 'baths':
-        filtered.sort((a, b) => b.bathrooms - a.bathrooms);
-        break;
-      default:
-        break;
-    }
+    console.log('PropertiesPage: After filtering, properties count:', filtered.length);
 
     return filtered;
-  }, [searchTerm, filters, sortBy]);
+  }, [searchTerm, cityFilter, bedroomsFilter, bathroomsFilter, priceRange, squareFeetRange, properties]);
 
   const clearFilters = () => {
-    setFilters({
-      priceRange: [0, 2000000],
-      bedrooms: [],
-      bathrooms: [],
-      squareFeet: [0, 10000],
-      communities: [],
-      homeTypes: [],
-      status: [],
-      quickMoveIn: false,
-    });
     setSearchTerm('');
+    setCityFilter('');
+    setBedroomsFilter('');
+    setBathroomsFilter('');
+    setPriceRange([0, 10000000]);
+    setSquareFeetRange([0, 10000]);
+    setShowFilters(false);
   };
+
+
+
+  // Get unique cities for dropdown
+  const cities = Array.from(new Set(properties.map(p => p.city).filter(Boolean)));
+  const bedroomOptions = [1, 2, 3, 4, 5, 6, 7, 8];
+  const bathroomOptions = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Loading Properties...</h2>
+          <p className="text-gray-600">Please wait while we fetch the available properties.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If no properties from database, show a message
+  if (properties.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container-max px-4 py-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">No Properties Available</h2>
+            <p className="text-gray-600 mb-6">There are currently no properties available for viewing.</p>
+            <div className="bg-white rounded-lg shadow-sm p-6 max-w-md mx-auto">
+              <p className="text-sm text-gray-500">
+                This could be because:
+              </p>
+              <ul className="text-sm text-gray-500 mt-2 text-left">
+                <li>• No properties have been added yet</li>
+                <li>• Properties are not published</li>
+                <li>• Database connection issues</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary-900 to-primary-700 text-white py-16">
-        <div className="container-max px-4">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container-max px-4 py-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Available Properties
-            </h1>
-            <p className="text-xl text-primary-100 max-w-2xl mx-auto">
-              Discover our collection of luxury homes available for quick move-in. 
-              Find the perfect property that matches your lifestyle and preferences.
-            </p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Premium Properties</h1>
+            <p className="text-lg text-gray-600 mb-8">Discover luxury homes and investment properties across Texas</p>
           </div>
-        </div>
-      </section>
 
-      {/* Filters and Search */}
-      <section className="bg-white border-b border-gray-200 sticky top-20 z-40">
-        <div className="container-max px-4 py-6">
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            {/* Search */}
-            <div className="relative w-full lg:w-96">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search properties..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* View Mode and Sort */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
-                >
-                  <Grid className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded ${viewMode === 'list' ? 'bg-white shadow-sm' : 'text-gray-600'}`}
-                >
-                  <List className="w-5 h-5" />
-                </button>
+          {/* Search and Filter Bar */}
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col lg:flex-row gap-4 items-center">
+              {/* Search */}
+              <div className="flex-1 w-full lg:w-auto">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="Search properties..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
               </div>
 
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              {/* Filter Toggle */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center space-x-2 bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors"
               >
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="sqft-low">Square Feet: Low to High</option>
-                <option value="sqft-high">Square Feet: High to Low</option>
-                <option value="beds">Most Bedrooms</option>
-                <option value="baths">Most Bathrooms</option>
-              </select>
+                <Filter className="w-5 h-5" />
+                <span>{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
+              </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Filter Toggles */}
-          <div className="mt-4 flex flex-wrap gap-2">
-            <button
-              onClick={() => setFilters(prev => ({ ...prev, quickMoveIn: !prev.quickMoveIn }))}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                filters.quickMoveIn 
-                  ? 'bg-primary-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Quick Move-In
-            </button>
-            
-            {communities.map(community => (
-              <button
-                key={community}
-                onClick={() => {
-                  const newCommunities = filters.communities.includes(community)
-                    ? filters.communities.filter(c => c !== community)
-                    : [...filters.communities, community];
-                  setFilters(prev => ({ ...prev, communities: newCommunities }));
-                }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  filters.communities.includes(community)
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {community}
-              </button>
-            ))}
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className="bg-white border-b border-gray-200">
+          <div className="container-max px-4 py-8">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* City Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">City</label>
+                  <select
+                    value={cityFilter}
+                    onChange={(e) => setCityFilter(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">All Cities</option>
+                    {cities.map(city => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </select>
+                </div>
 
-            {homeTypes.map(type => (
-              <button
-                key={type}
-                onClick={() => {
-                  const newTypes = filters.homeTypes.includes(type)
-                    ? filters.homeTypes.filter(t => t !== type)
-                    : [...filters.homeTypes, type];
-                  setFilters(prev => ({ ...prev, homeTypes: newTypes }));
-                }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  filters.homeTypes.includes(type)
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {type.replace('-', ' ')}
-              </button>
-            ))}
+                {/* Bedrooms Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Bedrooms</label>
+                  <select
+                    value={bedroomsFilter}
+                    onChange={(e) => setBedroomsFilter(e.target.value ? Number(e.target.value) : '')}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">Any Bedrooms</option>
+                    {bedroomOptions.map(beds => (
+                      <option key={beds} value={beds}>{beds}+ Bedrooms</option>
+                    ))}
+                  </select>
+                </div>
 
-            <button
-              onClick={clearFilters}
-              className="px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-            >
-              Clear All
-            </button>
+                {/* Bathrooms Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Bathrooms</label>
+                  <select
+                    value={bathroomsFilter}
+                    onChange={(e) => setBathroomsFilter(e.target.value ? Number(e.target.value) : '')}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">Any Bathrooms</option>
+                    {bathroomOptions.map(baths => (
+                      <option key={baths} value={baths}>{baths}+ Bathrooms</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Price Range */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Price Range</label>
+                  <div className="flex space-x-3">
+                    <div className="flex-1">
+                      <input
+                        type="number"
+                        placeholder="Min Price"
+                        value={priceRange[0] === 0 ? '' : priceRange[0]}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          setPriceRange([value, priceRange[1]]);
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+                    <span className="text-gray-500 self-center px-2">to</span>
+                    <div className="flex-1">
+                      <input
+                        type="number"
+                        placeholder="Max Price"
+                        value={priceRange[1] === 10000000 ? '' : priceRange[1]}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 10000000 : Number(e.target.value);
+                          setPriceRange([priceRange[0], value]);
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Square Footage Range */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Square Footage</label>
+                  <div className="flex space-x-3">
+                    <div className="flex-1">
+                      <input
+                        type="number"
+                        placeholder="Min Sq Ft"
+                        value={squareFeetRange[0] === 0 ? '' : squareFeetRange[0]}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 0 : Number(e.target.value);
+                          setSquareFeetRange([value, squareFeetRange[1]]);
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+                    <span className="text-gray-500 self-center px-2">to</span>
+                    <div className="flex-1">
+                      <input
+                        type="number"
+                        placeholder="Max Sq Ft"
+                        value={squareFeetRange[1] === 10000 ? '' : squareFeetRange[1]}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? 10000 : Number(e.target.value);
+                          setSquareFeetRange([squareFeetRange[0], value]);
+                        }}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Clear Filters */}
+                <div className="flex items-end">
+                  <button
+                    onClick={clearFilters}
+                    className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                    <span>Clear All</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      )}
 
       {/* Properties Grid */}
       <section className="section-padding">
@@ -256,11 +337,7 @@ const PropertiesPage: React.FC = () => {
 
           {/* Properties */}
           {filteredProperties.length > 0 ? (
-            <div className={
-              viewMode === 'grid' 
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'
-                : 'space-y-6'
-            }>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProperties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}

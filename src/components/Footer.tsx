@@ -24,16 +24,16 @@ const Footer: React.FC = () => {
               with premium amenities and outstanding locations.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
+              <a href="https://facebook.com" className="text-gray-400 hover:text-primary-400 transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
+              <a href="https://instagram.com" className="text-gray-400 hover:text-primary-400 transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
+              <a href="https://twitter.com" className="text-gray-400 hover:text-primary-400 transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
+              <a href="https://linkedin.com" className="text-gray-400 hover:text-primary-400 transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
             </div>
@@ -76,27 +76,27 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-4">Services</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <a href="/services/new-construction" className="text-gray-400 hover:text-white transition-colors">
                   New Construction
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <a href="/services/custom-homes" className="text-gray-400 hover:text-white transition-colors">
                   Custom Homes
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <a href="/services/investment-properties" className="text-gray-400 hover:text-white transition-colors">
                   Investment Properties
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <a href="/services/property-management" className="text-gray-400 hover:text-white transition-colors">
                   Property Management
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <a href="/services/financing" className="text-gray-400 hover:text-white transition-colors">
                   Financing Options
                 </a>
               </li>
@@ -143,13 +143,13 @@ const Footer: React.FC = () => {
               © 2025 Premium Real Estate. All Rights Reserved.
             </p>
             <div className="flex space-x-6 text-sm">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">
                 Terms of Service
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="/equal-housing-opportunity" className="text-gray-400 hover:text-white transition-colors">
                 Equal Housing Opportunity
               </a>
             </div>

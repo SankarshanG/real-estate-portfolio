@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Home, MapPin, Star, Users, Award } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { properties } from '../data/properties';
 import { communities } from '../data/communities';
 import PropertyCard from '../components/PropertyCard';
 import CommunityCard from '../components/CommunityCard';
+import Gallery from '../components/Gallery';
+import BlogSection from '../components/BlogSection';
+import SEO from '../components/SEO';
 
 const HomePage: React.FC = () => {
   const featuredProperties = properties.slice(0, 3);
@@ -12,41 +15,66 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
+              <SEO
+          title="Premium Real Estate Properties | Luxury Homes & Investment Properties"
+          description="Discover luxury homes and investment properties across Texas. Find your dream home with Premium Real Estate Properties."
+          keywords="Texas real estate, luxury homes, premium properties, investment properties, Texas homes for sale, luxury communities"
+          url="https://your-domain.com/"
+          type="website"
+        />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary-900 to-primary-700 text-white">
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-        <div className="relative container-max section-padding">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                Discover Your Dream Home in
-                <span className="text-primary-300"> Texas</span>
-              </h1>
-              <p className="text-xl mb-8 text-gray-200">
-                Explore luxury homes and premier communities across the Lone Star State. 
-                From modern townhomes to sprawling estates, find the perfect place to call home.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/properties" className="btn-primary text-center">
-                  View Properties
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-                <Link to="/contact" className="btn-secondary text-center">
-                  Contact Us
-                </Link>
-              </div>
+      <section className="relative h-screen">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&h=1080&fit=crop"
+            alt="Luxury Home"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black opacity-30"></div>
+        </div>
+        
+        {/* Content Overlay */}
+        <div className="relative h-full flex items-center justify-center">
+          <div className="text-center text-white">
+            <h1 className="text-5xl md:text-7xl font-serif font-bold mb-4">
+              Premium Real Estate
+            </h1>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold mb-8">
+              Properties
+            </h2>
+            <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto">
+              Discover luxury homes and investment properties across Texas
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/properties" className="bg-primary-600 text-white px-8 py-3 rounded font-medium hover:bg-primary-700 transition-colors flex items-center justify-center">
+                <span>View Properties</span>
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+              <Link to="/contact" className="bg-white text-gray-800 px-8 py-3 rounded font-medium hover:bg-gray-100 transition-colors flex items-center justify-center">
+                <span>Contact Us</span>
+              </Link>
             </div>
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop"
-                alt="Luxury Home"
-                className="rounded-lg shadow-2xl"
-              />
-              <div className="absolute -bottom-6 -left-6 bg-white text-gray-900 p-4 rounded-lg shadow-lg">
-                <div className="text-2xl font-bold text-primary-600">$849,000</div>
-                <div className="text-sm text-gray-600">Starting from</div>
-              </div>
-            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tab Navigation */}
+      <section className="bg-white border-b border-gray-200">
+        <div className="container-max px-4">
+          <div className="flex space-x-1">
+            <Link to="/properties" className="px-6 py-4 text-gray-600 hover:text-gray-900 font-medium border-b-2 border-transparent hover:border-gray-300 transition-colors">
+              Properties
+            </Link>
+            <Link to="/gallery" className="px-6 py-4 text-gray-600 hover:text-gray-900 font-medium border-b-2 border-transparent hover:border-gray-300 transition-colors">
+              Gallery
+            </Link>
+            <Link to="/floor-plans" className="px-6 py-4 text-gray-900 font-medium border-b-2 border-primary-600 bg-primary-50">
+              Floor Plans
+            </Link>
+            <Link to="/communities" className="px-6 py-4 text-gray-600 hover:text-gray-900 font-medium border-b-2 border-transparent hover:border-gray-300 transition-colors">
+              Communities
+            </Link>
           </div>
         </div>
       </section>
@@ -103,88 +131,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="section-padding bg-white">
-        <div className="container-max">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose Premium Real Estate
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              We're committed to delivering exceptional homes and outstanding service 
-              to every client we serve.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Home className="w-8 h-8 text-primary-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Quality Construction</h3>
-              <p className="text-gray-600">
-                Every home is built with premium materials and expert craftsmanship, 
-                ensuring lasting quality and value.
-              </p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-primary-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Prime Locations</h3>
-              <p className="text-gray-600">
-                Our communities are strategically located near top schools, shopping, 
-                and major highways for ultimate convenience.
-              </p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-primary-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Expert Service</h3>
-              <p className="text-gray-600">
-                Our experienced team provides personalized service throughout 
-                your home buying journey.
-              </p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8 text-primary-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Premium Amenities</h3>
-              <p className="text-gray-600">
-                Enjoy resort-style amenities including pools, fitness centers, 
-                and community spaces in our developments.
-              </p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="w-8 h-8 text-primary-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Award-Winning</h3>
-              <p className="text-gray-600">
-                Recognized for excellence in home building and customer satisfaction 
-                across Texas.
-              </p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Home className="w-8 h-8 text-primary-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Quick Move-In</h3>
-              <p className="text-gray-600">
-                Many of our homes are move-in ready, allowing you to settle into 
-                your new home quickly.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Property Gallery */}
+      <Gallery />
 
       {/* Featured Communities */}
       <section className="section-padding bg-gray-50">
@@ -213,6 +161,9 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Blog Section */}
+      <BlogSection />
 
       {/* CTA Section */}
       <section className="bg-primary-600 text-white section-padding">
