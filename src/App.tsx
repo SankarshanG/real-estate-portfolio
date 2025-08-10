@@ -64,44 +64,32 @@ const AppContent: React.FC = () => {
             } />
             <Route path="/admin" element={
               <AdminWrapper>
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
+                <AdminDashboard />
               </AdminWrapper>
             } />
             <Route path="/admin/properties" element={
               <AdminWrapper>
-                <ProtectedRoute>
-                  <PropertyList />
-                </ProtectedRoute>
+                <PropertyList />
               </AdminWrapper>
             } />
             <Route path="/admin/properties/new" element={
               <AdminWrapper>
-                <ProtectedRoute>
-                  <PropertyForm />
-                </ProtectedRoute>
+                <PropertyForm />
               </AdminWrapper>
             } />
             <Route path="/admin/properties/edit/:id" element={
               <AdminWrapper>
-                <ProtectedRoute>
-                  <PropertyForm />
-                </ProtectedRoute>
+                <PropertyForm />
               </AdminWrapper>
             } />
             <Route path="/admin/images" element={
               <AdminWrapper>
-                <ProtectedRoute>
-                  <ImageManager />
-                </ProtectedRoute>
+                <ImageManager />
               </AdminWrapper>
             } />
             <Route path="/admin/settings" element={
               <AdminWrapper>
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
+                <Settings />
               </AdminWrapper>
             } />
           </Routes>
