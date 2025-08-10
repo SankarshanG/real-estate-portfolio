@@ -21,6 +21,7 @@ import ImageManager from './pages/admin/ImageManager';
 import AdminLogin from './pages/admin/AdminLogin';
 import Settings from './pages/admin/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Scroll to top component
 const ScrollToTop: React.FC = () => {
@@ -58,34 +59,46 @@ const AppContent: React.FC = () => {
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
+              <AuthProvider>
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              </AuthProvider>
             } />
             <Route path="/admin/properties" element={
-              <ProtectedRoute>
-                <PropertyList />
-              </ProtectedRoute>
+              <AuthProvider>
+                <ProtectedRoute>
+                  <PropertyList />
+                </ProtectedRoute>
+              </AuthProvider>
             } />
             <Route path="/admin/properties/new" element={
-              <ProtectedRoute>
-                <PropertyForm />
-              </ProtectedRoute>
+              <AuthProvider>
+                <ProtectedRoute>
+                  <PropertyForm />
+                </ProtectedRoute>
+              </AuthProvider>
             } />
             <Route path="/admin/properties/edit/:id" element={
-              <ProtectedRoute>
-                <PropertyForm />
-              </ProtectedRoute>
+              <AuthProvider>
+                <ProtectedRoute>
+                  <PropertyForm />
+                </ProtectedRoute>
+              </AuthProvider>
             } />
             <Route path="/admin/images" element={
-              <ProtectedRoute>
-                <ImageManager />
-              </ProtectedRoute>
+              <AuthProvider>
+                <ProtectedRoute>
+                  <ImageManager />
+                </ProtectedRoute>
+              </AuthProvider>
             } />
             <Route path="/admin/settings" element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
+              <AuthProvider>
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              </AuthProvider>
             } />
           </Routes>
         </main>
