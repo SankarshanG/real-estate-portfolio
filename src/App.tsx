@@ -21,8 +21,6 @@ import ImageManager from './pages/admin/ImageManager';
 import AdminLogin from './pages/admin/AdminLogin';
 import Settings from './pages/admin/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './contexts/AuthContext';
-import { DatabaseService } from './services/database';
 
 // Scroll to top component
 const ScrollToTop: React.FC = () => {
