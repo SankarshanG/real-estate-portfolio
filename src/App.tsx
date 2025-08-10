@@ -37,18 +37,7 @@ const ScrollToTop: React.FC = () => {
 
 // Main app content component
 const AppContent: React.FC = () => {
-  useEffect(() => {
-    // Initialize default settings when app starts
-    const initializeSettings = async () => {
-      try {
-        await DatabaseService.initializeDefaultSettings();
-      } catch (error) {
-        console.error('Error initializing settings:', error);
-      }
-    };
-
-    initializeSettings();
-  }, []);
+  // Removed database initialization to prevent authentication issues
 
   return (
     <>
@@ -111,11 +100,9 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <HelmetProvider>
-      <AuthProvider>
-        <Router>
-          <AppContent />
-        </Router>
-      </AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
     </HelmetProvider>
   );
 }
