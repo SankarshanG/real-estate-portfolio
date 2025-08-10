@@ -21,7 +21,7 @@ import ImageManager from './pages/admin/ImageManager';
 import AdminLogin from './pages/admin/AdminLogin';
 import Settings from './pages/admin/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './contexts/AuthContext';
+import AdminWrapper from './components/AdminWrapper';
 
 // Scroll to top component
 const ScrollToTop: React.FC = () => {
@@ -59,46 +59,46 @@ const AppContent: React.FC = () => {
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={
-              <AuthProvider>
+              <AdminWrapper>
                 <ProtectedRoute>
                   <AdminDashboard />
                 </ProtectedRoute>
-              </AuthProvider>
+              </AdminWrapper>
             } />
             <Route path="/admin/properties" element={
-              <AuthProvider>
+              <AdminWrapper>
                 <ProtectedRoute>
                   <PropertyList />
                 </ProtectedRoute>
-              </AuthProvider>
+              </AdminWrapper>
             } />
             <Route path="/admin/properties/new" element={
-              <AuthProvider>
+              <AdminWrapper>
                 <ProtectedRoute>
                   <PropertyForm />
                 </ProtectedRoute>
-              </AuthProvider>
+              </AdminWrapper>
             } />
             <Route path="/admin/properties/edit/:id" element={
-              <AuthProvider>
+              <AdminWrapper>
                 <ProtectedRoute>
                   <PropertyForm />
                 </ProtectedRoute>
-              </AuthProvider>
+              </AdminWrapper>
             } />
             <Route path="/admin/images" element={
-              <AuthProvider>
+              <AdminWrapper>
                 <ProtectedRoute>
                   <ImageManager />
                 </ProtectedRoute>
-              </AuthProvider>
+              </AdminWrapper>
             } />
             <Route path="/admin/settings" element={
-              <AuthProvider>
+              <AdminWrapper>
                 <ProtectedRoute>
                   <Settings />
                 </ProtectedRoute>
-              </AuthProvider>
+              </AdminWrapper>
             } />
           </Routes>
         </main>
