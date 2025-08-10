@@ -20,7 +20,6 @@ import PropertyList from './pages/admin/PropertyList';
 import ImageManager from './pages/admin/ImageManager';
 import AdminLogin from './pages/admin/AdminLogin';
 import Settings from './pages/admin/Settings';
-import ProtectedRoute from './components/ProtectedRoute';
 import AdminWrapper from './components/AdminWrapper';
 
 // Scroll to top component
