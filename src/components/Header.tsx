@@ -23,11 +23,6 @@ const Header: React.FC = () => {
         hasDropdown: false 
       },
       { 
-        name: 'Map Demo', 
-        href: '/map-demo',
-        hasDropdown: false 
-      },
-      { 
         name: 'Communities', 
         href: '/communities',
         hasDropdown: false 
