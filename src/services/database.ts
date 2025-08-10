@@ -503,8 +503,6 @@ export const DatabaseService = {
     }
 
     try {
-      const now = new Date().toISOString();
-      
       // First get all active sales, then filter by date range in JavaScript
       const { data, error } = await supabase
         .from(TABLES.SALES)
@@ -619,7 +617,7 @@ export const DatabaseService = {
 
     try {
       // Check if settings table exists and has the default setting
-      const { data: existingSetting, error: checkError } = await supabase
+      const { error: checkError } = await supabase
         .from(TABLES.SETTINGS)
         .select('value')
         .eq('key', 'sold_property_visibility')
