@@ -57,7 +57,11 @@ const AppContent: React.FC = () => {
             <Route path="/about" element={<AboutPage />} />
             
             {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/login" element={
+              <AdminWrapper>
+                <AdminLogin />
+              </AdminWrapper>
+            } />
             <Route path="/admin" element={
               <AdminWrapper>
                 <ProtectedRoute>
