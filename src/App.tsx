@@ -20,6 +20,7 @@ import PropertyList from './pages/admin/PropertyList';
 import ImageManager from './pages/admin/ImageManager';
 import AdminLogin from './pages/admin/AdminLogin';
 import Settings from './pages/admin/Settings';
+import ProtectedRoute from './components/ProtectedRoute';
 import AdminWrapper from './components/AdminWrapper';
 
 // Scroll to top component
@@ -63,32 +64,44 @@ const AppContent: React.FC = () => {
             } />
             <Route path="/admin" element={
               <AdminWrapper>
-                <AdminDashboard />
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
               </AdminWrapper>
             } />
             <Route path="/admin/properties" element={
               <AdminWrapper>
-                <PropertyList />
+                <ProtectedRoute>
+                  <PropertyList />
+                </ProtectedRoute>
               </AdminWrapper>
             } />
             <Route path="/admin/properties/new" element={
               <AdminWrapper>
-                <PropertyForm />
+                <ProtectedRoute>
+                  <PropertyForm />
+                </ProtectedRoute>
               </AdminWrapper>
             } />
             <Route path="/admin/properties/edit/:id" element={
               <AdminWrapper>
-                <PropertyForm />
+                <ProtectedRoute>
+                  <PropertyForm />
+                </ProtectedRoute>
               </AdminWrapper>
             } />
             <Route path="/admin/images" element={
               <AdminWrapper>
-                <ImageManager />
+                <ProtectedRoute>
+                  <ImageManager />
+                </ProtectedRoute>
               </AdminWrapper>
             } />
             <Route path="/admin/settings" element={
               <AdminWrapper>
-                <Settings />
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
               </AdminWrapper>
             } />
           </Routes>
