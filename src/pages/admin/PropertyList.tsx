@@ -324,11 +324,7 @@ const PropertyList: React.FC = () => {
                           <div className="text-sm text-gray-500">
                             {property.type || 'Property'}
                           </div>
-                          {property.isQuickMoveIn && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              Quick Move-In
-                            </span>
-                          )}
+                          {/* Quick Move-In removed */}
                         </div>
                       </div>
                     </td>
@@ -409,6 +405,7 @@ const PropertyList: React.FC = () => {
                       <div className="flex items-center space-x-2">
                         <Link
                           to={`/properties/${property.id}`}
+                          state={{ fromAdmin: true }}
                           className="flex items-center space-x-1 text-primary-600 hover:text-primary-900 px-2 py-1 rounded hover:bg-primary-50 transition-colors"
                           title="View Property Details"
                         >

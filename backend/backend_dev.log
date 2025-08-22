@@ -1,0 +1,5 @@
+
+> real-estate-backend@1.0.0 dev
+> nodemon server.js
+
+sh: nodemon: command not found

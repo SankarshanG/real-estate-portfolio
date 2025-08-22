@@ -4,7 +4,7 @@ import {
   Save, ArrowLeft, Upload, X, Plus, Trash2,
   Bed, Bath, Square, Car, DollarSign
 } from 'lucide-react';
-import { Property } from '../../types';
+import { Property, Image as ImageModel } from '../../types';
 import DatabaseService from '../../services/database';
 // import { communities } from '../../data/communities';
 
@@ -31,7 +31,8 @@ const PropertyForm: React.FC = () => {
     type: 'single-family',
   });
 
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<ImageModel[]>([]);
   const [floorPlanFile, setFloorPlanFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,9 +43,9 @@ const PropertyForm: React.FC = () => {
         const existingProperty = await DatabaseService.getPropertyById(id);
         if (existingProperty) {
           setFormData(existingProperty);
-          // Load images for this property
+          // Load existing images for this property
           const images = await DatabaseService.getImagesByProperty(id);
-          setUploadedImages(images.map(img => img.image_url));
+          setExistingImages(images);
         }
       }
     };
@@ -58,6 +59,24 @@ const PropertyForm: React.FC = () => {
       ...prev,
       [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : value,
     }));
+  };
+
+  const handleDeleteExistingImage = async (imageId: string) => {
+    if (!id) return;
+    const confirmDelete = window.confirm('Are you sure you want to delete this image?');
+    if (!confirmDelete) return;
+    try {
+      const ok = await DatabaseService.deleteImage(imageId);
+      if (!ok) {
+        alert('Failed to delete image');
+        return;
+      }
+      const refreshed = await DatabaseService.getImagesByProperty(id);
+      setExistingImages(refreshed);
+    } catch (e) {
+      console.error('Delete image failed:', e);
+      alert('Delete image failed');
+    }
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +96,7 @@ const PropertyForm: React.FC = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const newImages: string[] = [];
+      const newImages: File[] = [];
       Array.from(files).forEach(file => {
         // Check file size (limit to 5MB)
         if (file.size > 5 * 1024 * 1024) {
@@ -85,15 +104,9 @@ const PropertyForm: React.FC = () => {
           return;
         }
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            newImages.push(e.target.result as string);
-            setUploadedImages(prev => [...prev, ...newImages]);
-          }
-        };
-        reader.readAsDataURL(file);
+        newImages.push(file);
       });
+      setUploadedImages(prev => [...prev, ...newImages]);
     }
   };
 
@@ -155,6 +168,12 @@ const PropertyForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('=== FORM SUBMISSION START ===');
+    console.log('Form event:', e);
+    console.log('Form data state:', formData);
+    console.log('Uploaded images count:', uploadedImages.length);
+    console.log('Floor plan file:', floorPlanFile);
+    
     setIsSubmitting(true);
 
     try {
@@ -179,21 +198,26 @@ const PropertyForm: React.FC = () => {
         status: formData.status || 'available',
         build_plan_url: formData.build_plan_url || '',
         published: formData.published !== false,
-        // Images will be handled separately
-        images: uploadedImages,
+        // Images will be handled separately after property creation
       };
 
       console.log('Submitting property data:', propertyData);
+      console.log('Property data type:', typeof propertyData);
+      console.log('Property data keys:', Object.keys(propertyData));
 
       let result;
       if (isEditing) {
+        console.log('Editing existing property with ID:', id);
         result = await DatabaseService.updateProperty(id!, propertyData);
         if (!result) {
           throw new Error('Failed to update property');
         }
         alert('Property updated successfully!');
       } else {
+        console.log('Creating new property...');
+        console.log('Calling DatabaseService.createProperty with:', propertyData);
         result = await DatabaseService.createProperty(propertyData);
+        console.log('createProperty result:', result);
         if (!result) {
           throw new Error('Failed to create property');
         }
@@ -217,6 +241,27 @@ const PropertyForm: React.FC = () => {
         }
       } else {
         console.log('No floor plan file to upload or no property result');
+      }
+
+      // Upload images if any
+      if (uploadedImages.length > 0 && result) {
+        try {
+          console.log('Uploading images for property:', result.id);
+          for (let i = 0; i < uploadedImages.length; i++) {
+            const image = uploadedImages[i];
+            const imageUrl = await DatabaseService.uploadImage(image, result.id, `Property image ${i + 1}`, i);
+            if (imageUrl) {
+              console.log(`Image ${i + 1} uploaded successfully:`, imageUrl);
+            } else {
+              console.error(`Image ${i + 1} upload failed`);
+            }
+          }
+        } catch (error) {
+          console.error('Error uploading images:', error);
+          alert('Property saved but image uploads failed. Please try uploading the images again.');
+        }
+      } else {
+        console.log('No images to upload or no property result');
       }
 
       // Navigate back to admin dashboard
@@ -584,7 +629,7 @@ const PropertyForm: React.FC = () => {
                       {uploadedImages.map((image, index) => (
                         <div key={index} className="relative">
                           <img
-                            src={image}
+                            src={URL.createObjectURL(image)}
                             alt={`Property ${index + 1}`}
                             className="w-full h-24 object-cover rounded-lg"
                           />
@@ -594,6 +639,30 @@ const PropertyForm: React.FC = () => {
                             className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                           >
                             <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {existingImages.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Existing Images</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {existingImages.map((img, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={img.image_url}
+                            alt={`Existing Property ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteExistingImage(img.id)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          >
+                            <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
                       ))}
@@ -688,10 +757,30 @@ const PropertyForm: React.FC = () => {
             >
               Cancel
             </button>
+            
+            {/* Test Button */}
+            <button
+              type="button"
+              onClick={async () => {
+                console.log('=== TEST BUTTON CLICKED ===');
+                try {
+                  const testResult = await DatabaseService.addTestProperty();
+                  console.log('Test property result:', testResult);
+                  alert(`Test property created: ${testResult ? 'SUCCESS' : 'FAILED'}`);
+                } catch (error) {
+                  console.error('Test button error:', error);
+                  alert(`Test error: ${error}`);
+                }
+              }}
+              className="btn-secondary"
+            >
+              Test DB
+            </button>
+            
             <button
               type="submit"
               disabled={isSubmitting}
-                              className="btn-primary"
+              className="btn-primary"
             >
               <Save className="w-5 h-5" />
               <span>{isSubmitting ? 'Saving...' : (isEditing ? 'Update Property' : 'Save Property')}</span>

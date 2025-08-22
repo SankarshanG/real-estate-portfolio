@@ -8,7 +8,7 @@ A modern, responsive real estate portfolio website built with React, TypeScript,
 - **Property Listings**: Browse available homes with detailed information
 - **Advanced Filtering**: Filter by price, bedrooms, bathrooms, square footage, and more
 - **Search Functionality**: Search properties by title, address, or city
-- **Quick Move-In Homes**: Special highlighting for move-in ready properties
+<!-- Quick Move-In highlighting removed per latest design -->
 - **Property Details**: Comprehensive property pages with image galleries
 
 ### 🏘️ Community Information

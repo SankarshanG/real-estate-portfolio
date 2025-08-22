@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Bed, Bath, Square, MapPin, Car, 
-  Phone, Mail, ArrowLeft, ChevronLeft, ChevronRight,
-  Download, Home, Star, Users
+  ArrowLeft, ChevronLeft, ChevronRight,
+  Download, Home, Star
 } from 'lucide-react';
 import { DatabaseService } from '../services/database';
 import { Property, ContactForm } from '../types';
@@ -11,6 +11,8 @@ import SEO from '../components/SEO';
 
 const PropertyDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const location = useLocation() as { state?: { fromAdmin?: boolean } };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
@@ -245,12 +247,22 @@ const PropertyDetailPage: React.FC = () => {
       {/* Breadcrumb */}
       <div className="bg-white border-b border-gray-200">
         <div className="container-max px-4 py-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link to="/" className="hover:text-primary-600">Home</Link>
-            <span>/</span>
-            <Link to="/properties" className="hover:text-primary-600">Properties</Link>
-            <span>/</span>
-            <span className="text-gray-900">{property.title}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <Link to="/" className="hover:text-primary-600">Home</Link>
+              <span>/</span>
+              <Link to="/properties" className="hover:text-primary-600">Properties</Link>
+              <span>/</span>
+              <span className="text-gray-900">{property.title}</span>
+            </div>
+            {location.state?.fromAdmin ? (
+              <button
+                onClick={() => navigate('/admin/properties')}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                Back to Admin
+              </button>
+            ) : null}
           </div>
         </div>
       </div>
@@ -259,118 +271,167 @@ const PropertyDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            {/* Enhanced Image Carousel */}
-            <div className="relative mb-8">
-              <div className="relative h-96 md:h-[500px] rounded-lg overflow-hidden bg-gray-200">
-                {property.images && property.images.length > 0 ? (
-                  <>
-                    <img
-                      src={property.images[currentImageIndex]}
-                      alt={property.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback to placeholder if image fails to load
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const placeholder = target.parentElement?.querySelector('.image-placeholder');
-                        if (placeholder) {
-                          placeholder.classList.remove('hidden');
-                        }
-                      }}
-                    />
-                    
-                    {/* Fallback placeholder */}
-                    <div className="image-placeholder hidden w-full h-full flex items-center justify-center">
+            {/* Summary panel + hero image */}
+            <div className="grid lg:grid-cols-3 gap-6 mb-8">
+              {/* Summary panel (left) */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <div className="text-sm text-gray-600">Price</div>
+                    <div className="text-2xl font-bold text-gray-900">{formatPrice(property.price || 0)}</div>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(property.status || 'available')}`}>
+                    {getStatusText(property.status || 'available')}
+                  </span>
+                </div>
+                {/* Stats moved below the gallery for more space */}
+                <div className="mt-4 space-y-2 text-sm">
+                  {property.floorPlan && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Floor Plan</span>
+                      <span className="font-medium">{property.floorPlan}</span>
+                    </div>
+                  )}
+                  {property.build_plan_url && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Plan PDF</span>
+                      <a href={property.build_plan_url} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">Download</a>
+                    </div>
+                  )}
+                  {property.garageSpaces !== undefined && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">Garage</span>
+                      <span className="font-medium">{property.garageSpaces}-Car</span>
+                    </div>
+                  )}
+                  {property.mlsNumber && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600">MLS#</span>
+                      <span className="font-medium">{property.mlsNumber}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Hero carousel (right, spans 2) */}
+              <div className="lg:col-span-2">
+                <div className="relative h-96 md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden bg-gray-200">
+                  {property.images && property.images.length > 0 ? (
+                    <>
+                      {(() => {
+                        const original = property.images[currentImageIndex];
+                        const isUploads = original && original.includes('/uploads/');
+                        const webp = isUploads ? original.replace(/\.[^.]+$/, '.webp') : '';
+                        return (
+                          <picture>
+                            {isUploads ? (
+                              <source srcSet={webp} type="image/webp" />
+                            ) : null}
+                            <img
+                              src={original}
+                              alt={`${property.title} - ${currentImageIndex + 1}`}
+                              className="w-full h-full object-cover"
+                              loading="eager"
+                              decoding="async"
+                              fetchPriority="high"
+                              sizes="100vw"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const placeholder = target.parentElement?.querySelector('.image-placeholder');
+                                if (placeholder) {
+                                  placeholder.classList.remove('hidden');
+                                }
+                              }}
+                            />
+                          </picture>
+                        );
+                      })()}
+
+                      {/* Fallback placeholder */}
+                      <div className="image-placeholder hidden w-full h-full flex items-center justify-center">
+                        <div className="text-center text-gray-500">
+                          <div className="text-6xl mb-4">🏠</div>
+                          <div className="text-lg font-medium">Image Not Available</div>
+                          <div className="text-sm">This image could not be loaded</div>
+                        </div>
+                      </div>
+
+                      {/* Navigation Arrows */}
+                      {property.images.length > 1 && (
+                        <>
+                          <button
+                            onClick={prevImage}
+                            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                            aria-label="Previous image"
+                          >
+                            <ChevronLeft className="w-6 h-6" />
+                          </button>
+                          <button
+                            onClick={nextImage}
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                            aria-label="Next image"
+                          >
+                            <ChevronRight className="w-6 h-6" />
+                          </button>
+                        </>
+                      )}
+
+                      {/* Image Counter */}
+                      <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+                        {currentImageIndex + 1} / {property.images.length}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
                       <div className="text-center text-gray-500">
                         <div className="text-6xl mb-4">🏠</div>
-                        <div className="text-lg font-medium">Image Not Available</div>
-                        <div className="text-sm">This image could not be loaded</div>
+                        <div className="text-lg font-medium">No Images Available</div>
+                        <div className="text-sm">Property images coming soon</div>
                       </div>
                     </div>
-                    
-                    {/* Navigation Arrows */}
-                    {property.images.length > 1 && (
-                      <>
-                        <button
-                          onClick={prevImage}
-                          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200"
-                        >
-                          <ChevronLeft className="w-6 h-6" />
-                        </button>
-                        <button
-                          onClick={nextImage}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all duration-200"
-                        >
-                          <ChevronRight className="w-6 h-6" />
-                        </button>
-                      </>
-                    )}
+                  )}
+                </div>
 
-                    {/* Image Counter */}
-                    <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      {currentImageIndex + 1} / {property.images.length}
-                    </div>
-
-                    {/* Status Badge */}
-                    <div className="absolute top-4 left-4">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(property.status || 'available')}`}>
-                        {getStatusText(property.status || 'available')}
-                      </span>
-                    </div>
-
-                    {/* Price Badge */}
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
-                      <span className="text-xl font-bold text-primary-600">
-                        {formatPrice(property.price || 0)}
-                      </span>
-                    </div>
-                  </>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center text-gray-500">
-                      <div className="text-6xl mb-4">🏠</div>
-                      <div className="text-lg font-medium">No Images Available</div>
-                      <div className="text-sm">Property images coming soon</div>
-                    </div>
+                {/* Thumbnail Navigation */}
+                {property.images && property.images.length > 1 && (
+                  <div className="flex space-x-2 mt-4 overflow-x-auto pb-2">
+                    {property.images.map((image: string, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${
+                          index === currentImageIndex 
+                            ? 'border-primary-600 ring-2 ring-primary-200' 
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        aria-label={`View image ${index + 1}`}
+                      >
+                        {(() => {
+                          const original = image;
+                          const isUploads = original && original.includes('/uploads/');
+                          const webp = isUploads ? original.replace(/\.[^.]+$/, '.webp') : '';
+                          return (
+                            <picture>
+                              {isUploads ? (
+                                <source srcSet={webp} type="image/webp" />
+                              ) : null}
+                              <img
+                                src={original}
+                                alt={`${property.title} ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                                decoding="async"
+                                sizes="(min-width:1024px) 15vw, (min-width:768px) 20vw, 33vw"
+                              />
+                            </picture>
+                          );
+                        })()}
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
-
-              {/* Thumbnail Navigation */}
-              {property.images && property.images.length > 1 && (
-                <div className="flex space-x-2 mt-4 overflow-x-auto pb-2">
-                  {property.images.map((image: string, index: number) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                        index === currentImageIndex 
-                          ? 'border-primary-600 ring-2 ring-primary-200' 
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <img
-                        src={image}
-                        alt={`${property.title} ${index + 1}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          // Fallback to placeholder if thumbnail fails to load
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const placeholder = target.parentElement?.querySelector('.thumbnail-placeholder');
-                          if (placeholder) {
-                            placeholder.classList.remove('hidden');
-                          }
-                        }}
-                      />
-                      {/* Fallback placeholder for thumbnails */}
-                      <div className="thumbnail-placeholder hidden w-full h-full bg-gray-200 flex items-center justify-center">
-                        <div className="text-gray-400 text-xs">🏠</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Property Details */}
@@ -389,6 +450,28 @@ const PropertyDetailPage: React.FC = () => {
                   </div>
                   <div className="text-sm text-gray-500">
                     {property.status === 'sold' ? 'Sold Price' : 'List Price'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Spacious stats row under the header */}
+              <div className="mt-2 mb-8 rounded-xl border border-gray-200 overflow-hidden">
+                <div className="grid grid-cols-2 md:grid-cols-4 bg-white">
+                  <div className="p-6 md:p-8 text-center border-b md:border-b-0 md:border-r border-gray-200">
+                    <div className="text-4xl font-bold text-gray-900">{property.stories || 1}</div>
+                    <div className="mt-2 text-xs tracking-widest uppercase text-gray-500">Stories</div>
+                  </div>
+                  <div className="p-6 md:p-8 text-center border-b md:border-b-0 md:border-r border-gray-200">
+                    <div className="text-4xl font-bold text-gray-900">{(property.sqft || property.squareFeet || 0).toLocaleString()}</div>
+                    <div className="mt-2 text-xs tracking-widest uppercase text-gray-500">Sqft</div>
+                  </div>
+                  <div className="p-6 md:p-8 text-center border-b md:border-b-0 md:border-r border-gray-200">
+                    <div className="text-4xl font-bold text-gray-900">{property.bedrooms || 0}</div>
+                    <div className="mt-2 text-xs tracking-widest uppercase text-gray-500">Beds</div>
+                  </div>
+                  <div className="p-6 md:p-8 text-center">
+                    <div className="text-4xl font-bold text-gray-900">{property.bathrooms || 0}</div>
+                    <div className="mt-2 text-xs tracking-widest uppercase text-gray-500">Baths</div>
                   </div>
                 </div>
               </div>
@@ -461,12 +544,7 @@ const PropertyDetailPage: React.FC = () => {
                         <span className="font-medium">{property.mlsNumber}</span>
                       </div>
                     )}
-                    {property.isQuickMoveIn && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Quick Move-In:</span>
-                        <span className="font-medium text-green-600">Yes</span>
-                      </div>
-                    )}
+                    {/* Quick Move-In removed */}
                   </div>
                 </div>
 
@@ -513,11 +591,10 @@ const PropertyDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar: Request Info (no agent names) */}
           <div className="lg:col-span-1">
-            {/* Contact Form */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Interested in this property?</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Request Info</h3>
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -574,31 +651,9 @@ const PropertyDetailPage: React.FC = () => {
                   type="submit"
                   className="w-full bg-primary-600 text-white py-3 px-4 rounded-lg hover:bg-primary-700 transition-colors font-medium"
                 >
-                  Send Message
+                  Send Inquiry
                 </button>
               </form>
-            </div>
-
-            {/* Agent Info */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Contact Agent</h3>
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <Users className="w-10 h-10 text-gray-400" />
-                </div>
-                <h4 className="font-semibold text-gray-900 mb-1">John Smith</h4>
-                <p className="text-gray-600 mb-3">Real Estate Agent</p>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-center text-gray-600">
-                    <Phone className="w-4 h-4 mr-2" />
-                    <span>(555) 123-4567</span>
-                  </div>
-                  <div className="flex items-center justify-center text-gray-600">
-                    <Mail className="w-4 h-4 mr-2" />
-                    <span>john@realestate.com</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

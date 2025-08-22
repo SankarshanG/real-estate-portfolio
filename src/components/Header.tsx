@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
       const navigation = [
+      { 
+        name: 'Home', 
+        href: '/',
+        hasDropdown: false 
+      },
       { 
         name: 'Properties', 
         href: '/properties',
@@ -27,45 +32,13 @@ const Header: React.FC = () => {
         href: '/communities',
         hasDropdown: false 
       },
-      { 
-        name: 'About', 
-        href: '/about',
-        hasDropdown: false 
-      },
+
     ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
-      {/* Top bar - Awards, Careers, Blog, Search */}
-      <div className="bg-gray-800 text-white py-2">
-        <div className="container-max px-4">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-6">
-              <Link to="/awards" className="hover:text-gray-300 transition-colors">
-                Awards
-              </Link>
-              <Link to="/careers" className="hover:text-gray-300 transition-colors">
-                Careers
-              </Link>
-              <Link to="/blog" className="hover:text-gray-300 transition-colors">
-                Blog
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="bg-gray-700 text-white px-3 py-1 rounded text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main header */}
       <div className="container-max px-4">

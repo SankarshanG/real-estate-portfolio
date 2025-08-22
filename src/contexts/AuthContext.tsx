@@ -54,9 +54,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [checkAuth]);
 
   const login = async (username: string, password: string): Promise<boolean> => {
-    // Default credentials
-    const DEFAULT_USERNAME = 'admin';
-    const DEFAULT_PASSWORD = 'pass';
+    // Configurable credentials via env, fallback to defaults
+    const DEFAULT_USERNAME = (process.env.REACT_APP_ADMIN_USER || 'admin').trim();
+    const DEFAULT_PASSWORD = (process.env.REACT_APP_ADMIN_PASS || 'pass').trim();
 
     if (username === DEFAULT_USERNAME && password === DEFAULT_PASSWORD) {
       localStorage.setItem('adminAuthenticated', 'true');

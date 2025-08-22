@@ -48,17 +48,32 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
       {/* Image */}
       <div className="relative overflow-hidden">
         {safeProperty.images && safeProperty.images.length > 0 ? (
-          <img
-            src={safeProperty.images[0]}
-            alt={safeProperty.title}
-            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              // Fallback to placeholder if image fails to load
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-              target.nextElementSibling?.classList.remove('hidden');
-            }}
-          />
+          (() => {
+            const original = safeProperty.images[0];
+            const isUploads = original && original.includes('/uploads/');
+            const webp = isUploads ? original.replace(/\.[^.]+$/, '.webp') : '';
+            return (
+              <picture>
+                {isUploads ? (
+                  <source srcSet={webp} type="image/webp" />
+                ) : null}
+                <img
+                  src={original}
+                  alt={safeProperty.title}
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
+                  onError={(e) => {
+                    // Fallback to placeholder if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    target.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+              </picture>
+            );
+          })()
         ) : null}
         {/* Fallback placeholder - always present but hidden when image loads successfully */}
         <div className={`w-full h-64 bg-gray-200 flex items-center justify-center ${safeProperty.images && safeProperty.images.length > 0 ? 'hidden' : ''}`}>
@@ -70,12 +85,14 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
           </div>
         </div>
         
-        {/* Quick Move-In Badge */}
-        {safeProperty.isQuickMoveIn && (
-          <div className="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-            Quick Move-In
+        {/* Image count badge */}
+        {safeProperty.images && safeProperty.images.length > 1 && (
+          <div className="absolute top-4 left-4 bg-black/70 text-white px-2 py-1 rounded-full text-xs font-medium">
+            +{safeProperty.images.length - 1} more
           </div>
         )}
+        
+        {/* Quick Move-In Badge removed */}
         
         {/* SOLD Overlay */}
         {safeProperty.status === 'sold' && (

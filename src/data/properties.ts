@@ -19,9 +19,11 @@ export const properties: Property[] = [
     floorPlan: 'Plan 851',
     mlsNumber: '20618273',
     images: [
-      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop'
+      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&h=800&q=80'
     ],
     description: 'Stunning luxury home featuring modern design, premium finishes, and spacious living areas. Perfect for families seeking comfort and style.',
     features: ['Gourmet Kitchen', 'Master Suite', 'Home Office', '3-Car Garage', 'Backyard Oasis'],
@@ -48,9 +50,11 @@ export const properties: Property[] = [
     floorPlan: 'Plan 1533',
     mlsNumber: '20995076',
     images: [
-      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1560448075-bb485b067938?w=800&h=600&fit=crop'
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1560448075-bb485b067938?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&h=800&q=80'
     ],
     description: 'Contemporary townhome with open concept living, designer kitchen, and private outdoor space. Ideal for modern living.',
     features: ['Open Floor Plan', 'Designer Kitchen', 'Private Balcony', '2-Car Garage', 'Smart Home Features'],
@@ -77,9 +81,11 @@ export const properties: Property[] = [
     floorPlan: 'Plan 609',
     mlsNumber: '20777523',
     images: [
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop'
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&h=800&q=80'
     ],
     description: 'Magnificent estate home with premium amenities, custom finishes, and resort-style backyard. The epitome of luxury living.',
     features: ['Chef\'s Kitchen', 'Wine Cellar', 'Home Theater', 'Pool & Spa', '4-Car Garage'],
@@ -106,9 +112,11 @@ export const properties: Property[] = [
     floorPlan: 'Plan 609',
     mlsNumber: '20790745',
     images: [
-      'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop'
+      'https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&h=800&q=80'
     ],
     description: 'Exceptional family home with generous living spaces, multiple master suites, and entertainment areas perfect for large families.',
     features: ['Multiple Master Suites', 'Game Room', 'Outdoor Kitchen', 'Sports Court', '5-Car Garage'],
@@ -135,9 +143,9 @@ export const properties: Property[] = [
     floorPlan: 'Plan 1688',
     mlsNumber: '20995041',
     images: [
-      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop'
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=1200&h=800&q=80'
     ],
     description: 'Beautiful ranch-style home with open concept design, perfect for those seeking single-level living with modern amenities.',
     features: ['Single-Level Living', 'Open Concept', 'Covered Patio', '2-Car Garage', 'Low Maintenance'],
@@ -164,9 +172,9 @@ export const properties: Property[] = [
     floorPlan: 'Plan 1454',
     mlsNumber: '20782180',
     images: [
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop'
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&h=800&q=80',
+      'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&h=800&q=80'
     ],
     description: 'Contemporary home in Fort Worth featuring modern architecture, energy-efficient design, and convenient location.',
     features: ['Energy Efficient', 'Modern Design', 'Smart Home', '2-Car Garage', 'Community Pool'],

@@ -80,6 +80,37 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const testMockDatabase = async () => {
+    try {
+      console.log('Testing mock database...');
+      const testProperty = await DatabaseService.addTestProperty();
+      if (testProperty) {
+        alert('Test property added successfully! Check console for details.');
+        // Reload stats
+        const allProperties = await DatabaseService.getAllProperties();
+        const totalProperties = allProperties.length;
+        const availableProperties = allProperties.filter(p => p.status === 'available').length;
+        const underContractProperties = allProperties.filter(p => p.status === 'under-contract').length;
+        const soldProperties = allProperties.filter(p => p.status === 'sold').length;
+        const totalValue = allProperties.reduce((sum, p) => sum + p.price, 0);
+        
+        setStats({
+          totalProperties,
+          availableProperties,
+          underContractProperties,
+          soldProperties,
+          totalCommunities: communities.length,
+          totalValue,
+        });
+      } else {
+        alert('Failed to add test property');
+      }
+    } catch (error) {
+      console.error('Error testing mock database:', error);
+      alert('Error testing mock database. Please check console.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -222,6 +253,17 @@ const AdminDashboard: React.FC = () => {
                 <p className="text-sm text-gray-600">
                   {isCreatingSamples ? 'Please wait...' : 'Add sample properties & sales'}
                 </p>
+              </div>
+            </button>
+
+            <button
+              onClick={testMockDatabase}
+              className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-colors"
+            >
+              <Plus className="w-6 h-6 text-primary-600" />
+              <div>
+                <p className="font-medium text-gray-900">Test Database</p>
+                <p className="text-sm text-gray-600">Verify mock database is working</p>
               </div>
             </button>
           </div>

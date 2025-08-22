@@ -1,21 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { properties } from '../data/properties';
-import { communities } from '../data/communities';
 import PropertyCard from '../components/PropertyCard';
 import CommunityCard from '../components/CommunityCard';
 import Gallery from '../components/Gallery';
 import BlogSection from '../components/BlogSection';
 import SEO from '../components/SEO';
+import { DatabaseService } from '../services/database';
+import { Property, Community } from '../types';
 
 const HomePage: React.FC = () => {
-  const featuredProperties = properties.slice(0, 3);
-  const featuredCommunities = communities.slice(0, 3);
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
+  const [featuredCommunities, setFeaturedCommunities] = useState<Community[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Test database connection
+        const isConnected = await DatabaseService.testConnection();
+        console.log('Database connection status:', isConnected);
+
+        if (isConnected) {
+          // Fetch properties from Supabase
+          const properties = await DatabaseService.getAllProperties();
+          setFeaturedProperties(properties.slice(0, 3));
+          
+          // Fetch communities from Supabase
+          const communities = await DatabaseService.getAllCommunities();
+          setFeaturedCommunities(communities.slice(0, 3));
+        } else {
+          console.warn('Using fallback data due to database connection issues');
+          // You can add fallback data here if needed
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading properties...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
-              <SEO
+      <SEO
           title="Premium Real Estate Properties | Luxury Homes & Investment Properties"
           description="Discover luxury homes and investment properties across Texas. Find your dream home with Premium Real Estate Properties."
           keywords="Texas real estate, luxury homes, premium properties, investment properties, Texas homes for sale, luxury communities"
@@ -79,39 +120,17 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Quick Stats */}
-      <section className="bg-white py-12">
-        <div className="container-max px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-primary-600 mb-2">500+</div>
-              <div className="text-gray-600">Homes Built</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-primary-600 mb-2">15</div>
-              <div className="text-gray-600">Communities</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-primary-600 mb-2">98%</div>
-              <div className="text-gray-600">Customer Satisfaction</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-primary-600 mb-2">25+</div>
-              <div className="text-gray-600">Years Experience</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Featured Properties */}
+
+      {/* Latest Listings */}
       <section className="section-padding bg-gray-50">
         <div className="container-max">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Featured Properties
+              Latest Listings
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Discover our latest luxury homes available for quick move-in. 
+              Discover our newest luxury homes available for quick move-in. 
               Each property features premium finishes and exceptional locations.
             </p>
           </div>
@@ -124,7 +143,7 @@ const HomePage: React.FC = () => {
           
           <div className="text-center">
             <Link to="/properties" className="btn-primary">
-              View All Properties
+              Browse All Listings
               <ArrowRight className="w-5 h-5 ml-2" />
             </Link>
           </div>

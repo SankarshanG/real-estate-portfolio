@@ -53,29 +53,7 @@ const AboutPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="section-padding bg-gray-50">
-        <div className="container-max">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold text-primary-600 mb-2">500+</div>
-              <div className="text-gray-600">Homes Built</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-primary-600 mb-2">15</div>
-              <div className="text-gray-600">Communities</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-primary-600 mb-2">25+</div>
-              <div className="text-gray-600">Years Experience</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-primary-600 mb-2">98%</div>
-              <div className="text-gray-600">Customer Satisfaction</div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Values */}
       <section className="section-padding bg-white">
